@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href={{template "favicon" .}} type="image/x-icon" />
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<style>
+* { margin: 0; padding: 0; border: none }
+a, a img { margin: 0; padding: 0; border: none }
+table { width: 100% }
+input { width: 100%; font-size: 2.7em; padding: 0.3em }
+input:hover { background: #eee }
+.play { display: inline-block; float: left; width: 245px; height: 245px; background-size: 245px; text-decoration: none }
+.play p { opacity: 0; transition: opacity 2s ease; color: #000; font: 1.2em sans-serif; padding: 0.3em; background: rgba(255,255,255,0.8); }
+.play:hover p { opacity: 0.9 }
+.playlist { display: inline-block; }
+.playlist li { font-size: 1em; padding: 0.6em 0.2em; list-style: none; }
+.playlist a { color: #000; text-decoration: none }
+.playlist li.current { font-weight: bold; }
+.playlist li:hover { background: #ddd; }
+</style>
+<title>{{template "title" .}}</title>
+</head>
+<body>
+{{template "body" .}}
+</body>
+</html>

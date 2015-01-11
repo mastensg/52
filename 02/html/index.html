@@ -1,0 +1,63 @@
+{{define "favicon"}}"{{.Album.Folder}}/folder.jpg"}}{{end}}
+{{define "title"}}{{.Album.Name}}{{end}}
+{{define "body"}}
+{{if .CurrentSong}}
+<table>
+    <colgroup>
+        <col style="width: 25%" />
+        <col style="width: 25%" />
+        <col style="width: 25%" />
+        <col style="width: 25%" />
+    </colgroup>
+<tr>
+<td>
+<form action="/" method="POST">
+    <input type="hidden" name="action" value="previous" />
+    <input type="submit" value="|<<" />
+</form>
+</td>
+<td>
+<form action="/" method="POST">
+    <input type="hidden" name="action" value="pause" />
+    <input type="submit" value="||" />
+</form>
+</td>
+<td>
+<form action="/" method="POST">
+    <input type="hidden" name="action" value="play" />
+    <input type="submit" value=">" />
+</form>
+</td>
+<td>
+<form action="/" method="POST">
+    <input type="hidden" name="action" value="next" />
+    <input type="submit" value=">>|" />
+</form>
+</td>
+</tr>
+</table>
+
+<div class="play" style="background-image: url({{.Album.Folder}}/folder.jpg); background-size: 980px; width: 980px; height: 980px">
+<p>{{.Album.Name}}</p>
+</div>
+
+<div class="playlist">
+<ol>
+{{range .Playlist}}
+<a href="/skip/{{.Track}}">
+<li class="{{.Class}}">
+{{.Track}}
+{{.Title}}
+</li>
+</a>
+{{end}}
+</ol>
+</div>
+{{end}}
+
+<div style="clear: both">
+{{range .Albums}}
+<a class="play" style="background-image: url({{.Folder}}/folder_245.jpg)" href="/play/{{.Name}}"><p>{{.Name}}</p></a>
+{{end}}
+</div>
+{{end}}
