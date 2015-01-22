@@ -25,8 +25,9 @@ read_samples()
 
         if (numallocs < numsamples)
         {
-            if (!(samples = realloc(samples,
-                                    (numallocs + 1024) * sizeof(samples[0]))))
+            numallocs += 1024;
+
+            if (!(samples = realloc(samples, numallocs * sizeof(samples[0]))))
                 err(EXIT_FAILURE, "realloc");
         }
 
