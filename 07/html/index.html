@@ -1,0 +1,21 @@
+{{define "title"}}dnsraf{{end}}
+{{define "body"}}
+<h2>Update host address</h2>
+
+<form action="/" method="POST">
+    <label for="hostname">hostname</label>
+    <input type="text" name="hostname" required />
+    <input type="submit" value="submit" />
+</form>
+
+<h2>Hosts</h2>
+
+<table class="hosts">
+{{range .}}
+<tr>
+    <td><a href="{{.Name}}">{{.Name}}</a></td>
+    <td>{{(index .Samples 0).Address}}</td>
+</tr>
+{{end}}
+
+{{end}}

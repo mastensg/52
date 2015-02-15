@@ -1,0 +1,23 @@
+{{define "title"}}{{.Name}}{{end}}
+{{define "body"}}
+<h1>{{.Name}}</h1>
+
+<h2>Update {{.Name}}'s address</h2>
+<form action="/{{.Name}}" method="POST">
+    <label for="hostname">hostname</label>
+    <input type="text" name="hostname" value="{{.Name}}" readonly required />
+    <input type="submit" value="submit" />
+</form>
+
+<h2>{{.Name}} addresses</h2>
+<table class="samples">
+
+{{range $i, $s := .Samples}}
+<tr>
+    <td>{{$s.Time}}</td>
+    <td>{{$s.Address}}</td>
+    <td>{{if eq $i 0}}<a href="?plain=yes">plain</a>{{end}}</td>
+</tr>
+{{end}}
+
+{{end}}
