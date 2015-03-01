@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+import html
+import sys
+
+import lxml.html
+import requests
+
+def find(title):
+    p = {"json": 1, "nr": 1, "tt": 1, "q": title}
+    r = requests.get("http://www.imdb.com/xml/find", params=p)
+    j = r.json()
+    for i in "title_popular", "title_exact":
+        if i in j:
+            t = j[i][0]
+            t["title"] = html.unescape(t["title"])
+            return t
+
+def rating_of_id(tt):
+    url = "http://www.imdb.com/title/" + tt
+    r = requests.get(url)
+    doc = lxml.html.fromstring(r.text)
+    number = doc.findall(".//div[@class='titlePageSprite star-box-giga-star']")[0].text.strip()
+    return number
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: %s title" % sys.argv[0])
+        exit(1)
+
+    title = " ".join(sys.argv[1:])
+
+    t = find(title)
+    if not t:
+        print("Not found")
+        exit(1)
+
+    year = t["title_description"].split(",")[0]
+    rating = rating_of_id(t["id"])
+    print("%s\t%s\t%s" % (t["title"], year, rating))
