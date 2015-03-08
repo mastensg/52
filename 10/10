@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+
+import os
+import subprocess
+import sys
+import time
+import traceback
+
+COMPILERS = {
+    "c": "gcc -g -O2 -std=gnu99 -static -lm -o main main.c",
+    "cc": "g++ -g -O2 -static -std=gnu++11 -o main main.cc",
+    "py": "cp main.py main; chmod +x main",
+}
+
+def check(problem, lastname):
+    if not lastname in COMPILERS:
+        files1 = os.listdir(problem)
+        files2 = [problem + "/" + f for f in files1]
+        files3 = [(os.path.getctime(f), f) for f in files2]
+        for f in reversed(sorted(files3)):
+            lastname = f[1].split(".")[-1]
+            if lastname in COMPILERS:
+                language = lastname
+                break
+        else:
+            return
+    else:
+        language = lastname
+
+    sys.stdout.write("\033[2J\033[;H")
+
+    build = "(cd " + problem + "; " + COMPILERS[language] + ")"
+    sys.stdout.write("\033[1;36m" + build + "\033[0m\n")
+    if subprocess.call(build, shell=True):
+        return
+
+    for test in sorted(os.listdir(problem + "/tests")):
+        if not test.endswith(".in"):
+            continue
+
+        in_path = problem + "/tests/" + test
+        in_lines = open(in_path, "rb").readlines()
+
+        ans_path = problem + "/tests/" + test.rstrip(".in") + ".ans"
+        ans_lines = open(ans_path, "rb").readlines()
+
+        run = "(cd " + problem + "; ./main < tests/" + test + ")"
+        sys.stdout.write("\033[1;36m" + run + "\033[0m\n")
+
+        start = time.time()
+
+        program = subprocess.Popen(run, shell=True, stdout=subprocess.PIPE)
+
+        out_lines = []
+        fail = False
+        l = 0
+        for line in program.stdout:
+            correct = l < len(ans_lines) and line == ans_lines[l]
+
+            if correct:
+                if fail:
+                    sys.stdout.buffer.write(b"\033[1;32m" + line + b"\033[0m")
+            else:
+                if not fail:
+                    fail = True
+                    for ol in out_lines:
+                        sys.stdout.buffer.write(b"\033[1;32m" + ol + b"\033[0m")
+
+                sys.stdout.buffer.write(b"\033[1;31m" + line + b"\033[0m")
+
+            sys.stdout.flush()
+            out_lines.append(line)
+            l += 1
+
+        program.wait()
+        end = time.time()
+
+        sys.stdout.write("\033[1;33m %.3f ms\033[0m\n" % (1000 * (end - start)))
+
+        ret = program.returncode
+        if ret:
+            sys.stdout.write("\033[1;31m" + "Run Time Error: %d" % ret + "\033[0m\n")
+
+        if l != len(ans_lines):
+            if not fail:
+                for ol in out_lines:
+                    sys.stdout.buffer.write(b"\033[1;32m" + ol + b"\033[0m")
+
+            fail = True
+
+        if not fail:
+            continue
+
+        sys.stdout.write("\033[1;35m" + in_path + "\033[0m\n")
+        sys.stdout.buffer.write(b"".join(in_lines))
+
+        sys.stdout.write("\033[1;35m" + ans_path + "\033[0m\n")
+        sys.stdout.buffer.write(b"".join(ans_lines))
+        sys.stdout.write("\033[1;31m" + "Wrong Answer" + "\033[0m\n")
+
+if __name__ == "__main__":
+    inotifywait = subprocess.Popen(
+        "/usr/bin/inotifywait -qmr .",
+        shell=True,
+        stdout=subprocess.PIPE,
+        )
+
+    for line in inotifywait.stdout:
+        line = str(line, "utf-8")
+
+        try:
+            dirname, event, basename = line.split()
+        except:
+            continue
+
+        if event != "CLOSE_WRITE,CLOSE":
+            continue
+
+        if basename.endswith(".swp"):
+            continue
+
+        lastname = basename.split(".")[-1]
+        if not lastname in ("c", "cc", "py", "in", "ans"):
+            continue
+
+        problem = dirname.split("/")[1]
+
+        try:
+            check(problem, lastname)
+        except:
+            print(traceback.format_exc())
