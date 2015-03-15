@@ -1,0 +1,142 @@
+#!/usr/bin/env python
+
+from __future__ import division
+
+from math import *
+from random import *
+
+import atexit
+import curses
+import sys
+
+class TextBuffer:
+    def __init__(self):
+        self.text = ""
+        self.cursor = 0
+
+    def __len__(self):
+        return len(self.text)
+
+    def insert(self, c):
+        self.text = self.text[:self.cursor] + c + self.text[self.cursor:]
+        self.cursor += 1
+
+    def backspace(self):
+        if self.cursor == 0:
+            return
+
+        self.text = self.text[:self.cursor - 1] + self.text[self.cursor:]
+        self.cursor -= 1
+
+    def left(self):
+        if self.cursor <= 0:
+            return
+
+        self.cursor -= 1
+
+    def right(self):
+        if self.cursor >= len(self):
+            return
+
+        self.cursor += 1
+
+    def delete_to_beginning(self):
+        self.text = self.text[self.cursor:]
+        self.cursor = 0
+
+    def delete_word(self):
+        found_word = False
+
+        for i in range(self.cursor - 1, -1, -1):
+            c = self.text[i]
+
+            if not found_word and not c.isspace():
+                found_word = True
+                continue
+
+            if found_word and c.isspace():
+                i += 1
+                break
+        else:
+            i = 0
+
+        self.text = self.text[:i] + self.text[self.cursor:]
+        self.cursor = i
+
+    def move_to_beginning(self):
+        self.cursor = 0
+
+    def move_to_end(self):
+        self.cursor = len(self)
+
+def cleanup():
+    global w
+
+    w.keypad(0)
+    curses.nocbreak()
+    curses.echo()
+    curses.endwin()
+
+if __name__ == "__main__":
+    atexit.register(cleanup)
+
+    w = curses.initscr()
+
+    curses.noecho()
+    curses.cbreak()
+    w.keypad(1)
+
+    c = 0
+    tb = TextBuffer()
+    last = ""
+    result = ""
+
+    while True:
+        if c in (8, curses.KEY_BACKSPACE):
+            tb.backspace()
+        elif c == 4 and len(tb) == 0:
+            exit(0)
+        elif c == 18:
+            last = ""
+        elif c == 12:
+            w.clear()
+        elif c == curses.KEY_LEFT:
+            tb.left()
+        elif c == curses.KEY_RIGHT:
+            tb.right()
+        elif c == curses.KEY_UP:
+            pass
+        elif c == curses.KEY_DOWN:
+            pass
+        elif c in (1, curses.KEY_HOME):
+            tb.move_to_beginning()
+        elif c in (5, curses.KEY_END):
+            tb.move_to_end()
+        elif c == 21:
+            tb.delete_to_beginning()
+        elif c == 23:
+            tb.delete_word()
+        elif 32 <= c < 128:
+            tb.insert(chr(c))
+
+        if last != tb.text:
+            try:
+                result = str(eval(tb.text))
+            except:
+                result = ""
+
+        w.erase()
+
+        w.addstr(0, 0, ">>> " + tb.text)
+        w.addstr(1, 0, result)
+
+        w.move(0, 4 + tb.cursor)
+
+        w.refresh()
+
+        last = tb.text
+
+        try:
+            c = w.getch()
+        except KeyboardInterrupt:
+            sys.exit(0)
