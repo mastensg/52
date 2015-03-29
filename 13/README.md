@@ -1,7 +1,7 @@
 skjermer
 ========
 
-This program parses the computer monitor category at Prisjakt.
+This program parses [the computer monitor category at Prisjakt.no](http://www.prisjakt.no/category.php?k=393).
 
 Dependencies
 ------------
