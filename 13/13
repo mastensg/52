@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+
+import collections
+import csv
+import html
+import re
+import sys
+import time
+
+import lxml.html
+import requests
+
+monitor = collections.namedtuple("monitor", "price shops diag res link name")
+
+def monitors(html):
+    doc = lxml.html.fromstring(html)
+    for row in doc.findall(".//table[@id='table_produktlista']/tbody/tr"):
+        cells = row.findall("td")
+
+        clink = cells[2].find("h4/span/a")
+        link = clink.attrib["href"]
+
+        cname = cells[2].find("h4/span/a")
+        name = cname.text
+
+        cprice = cells[3].find("h4/a")
+        tprice = cprice.text
+        price = int(re.sub("[^0-9]", "", tprice))
+
+        cshops = cells[3].findall("span")[1]
+        tshops = cshops.text
+        shops = int(tshops)
+
+        hdiag = cells[7].find("span")
+        tdiag = hdiag.tail
+        diag = float(tdiag.split()[0].replace(",", "."))
+
+        cres = cells[8]
+        tres = cres.text
+        res = tuple(int(i) for i in tres.split("x"))
+
+        cpan = cells[9]
+        pan = cpan.text
+
+        m = monitor(price, shops, diag, res, link, name)
+        assert(all(m))
+        yield m
+
+def write_csv(mons, f=sys.stdout):
+    w = csv.writer(f, delimiter="\t")
+    for m in mons:
+        w.writerow((m.res[0] * m.res[1],) + m)
+
+def get():
+    url = "http://www.prisjakt.no/category.php?k=393&s=%d" % 0
+    r = requests.get(url)
+    return r.text
+
+if __name__ == "__main__":
+    write_csv(monitors(get()))
