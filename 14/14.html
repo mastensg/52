@@ -1,0 +1,23 @@
+<body onload="
+setInterval(function(){
+c=E.getContext('2d');
+a=H=400;
+s=Math.sin;
+while(a--){
+function f(o,p){c.fillStyle=n;c.fillRect(o,a,p,1)}
+n='#fff';
+f(0,800);
+k=a/H+0.026*t;
+k=1.4*s(1.7*k);
+A=H+80*s(k);
+B=H+80*s(k+1.6);
+C=H+80*s(k+3);
+D=H+80*s(k+5);
+n='#e0e';A<B&&(a+1)&1?f(A,B-A):c;
+n='#cc0';B<C&&(a+0)&1?f(B,C-B):c;
+n='#0cc';C<D&&(a+0)&1?f(C,D-C):c;
+n='#000';D<A&&(a+1)&1?f(D,A-D):c;
+}
+t=(t+1)
+},t=50)">
+<canvas id=E width=800 height=800>
