@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+
+from os import system
+
+from twisted.internet import reactor
+from txosc import osc
+from txosc import dispatch
+from txosc import async
+from alsaaudio import Mixer
+from mpd import MPDClient
+
+class UDPReceiverApplication(object):
+    def __init__(self, port):
+        self.port = port
+        self.receiver = dispatch.Receiver()
+        self._server_port = reactor.listenUDP(self.port, async.DatagramServerProtocol(self.receiver))
+
+        self.mixer = Mixer()
+
+        self.mpd_init()
+
+        self.receiver.addCallback("/macmini/pot/3/0", self.mpd)
+        self.receiver.addCallback("/macmini/pot/3/3", self.master)
+        self.receiver.fallback = self.fallback
+
+    def mpd_init(self):
+        self.mpdClient = MPDClient()
+        self.mpdClient.timeout=10
+        self.mpdClient.connect("localhost",6600)
+
+    def mpd(self, message, address):
+        vol = int(round(message.getValues()[0] * 100.0 / 4096))
+
+        try:
+            self.mpdClient.setvol(vol)
+        except:
+            self.mpd_init()
+
+        self.mpdClient.setvol(vol)
+
+    def master(self, message, address):
+        vol = int(round(message.getValues()[0] * 100.0 / 4096))
+        self.mixer.setmute(0 == vol)
+        self.mixer.setvolume(vol)
+
+    def fallback(self, message, address):
+        pass
+
+if __name__ == "__main__":
+    app = UDPReceiverApplication(7770)
+    reactor.run()
