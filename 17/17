@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+
+name = None; qoute = 0; vocabulary = {}; stack = []; heap = {}
+pop, push = stack.pop, stack.append
+
+def do(word):
+    global name, qoute
+
+    if qoute:
+        if   word == "(":       qoute += 1
+        elif word == ")":       qoute -= 1
+        if qoute:               stack[-1].append(word)
+    elif name == ":":           name = word; vocabulary[name] = []
+    elif word == ";":           name = None
+    elif name:                  vocabulary[name].append(word)
+    elif word in vocabulary:    map(do, vocabulary[word])
+    elif word == ":":           name = ":"
+    elif word == "!":           k = pop(); heap[k] = pop()
+    elif word == "(":           qoute = 1; push([])
+    elif word == "<":           push(pop() < pop())
+    elif word == "=":           push(pop() == pop())
+    elif word == ">":           push(pop() > pop())
+    elif word == "*":           push(pop() * pop())
+    elif word == "+":           push(pop() + pop())
+    elif word == "-":           push(pop(-2) - pop())
+    elif word == ".":           print "  " + str(pop())
+    elif word == "/":           push(pop(-2) / pop())
+    elif word == "@":           push(heap[pop()])
+    elif word == "drop":        pop()
+    elif word == "dup":         push(stack[-1])
+    elif word == "if":          b, a, p = pop(), pop(), pop(); map(do, a if p else b)
+    elif word == "loop":        n, q = pop(), pop(); [map(do, q) for i in range(n)]; pop()
+    else:
+        try:    push(eval(word))
+        except: print "  ?"
+
+while True:
+    try:                map(do, raw_input().split())
+    except EOFError:    break

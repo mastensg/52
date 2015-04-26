@@ -1,0 +1,3 @@
+: zero? dup 0 = ;
+: factorial zero?  ( drop 1 ) ( dup 1 - factorial * ) if ;
+1 ( dup factorial . 1 + ) 20 loop
