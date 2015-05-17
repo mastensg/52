@@ -1,0 +1,46 @@
+<style>
+* { margin: 0; padding: 0; }
+</style>
+<canvas id=C width=100 height=100>
+<script type="text/javascript">
+h = window.innerHeight;
+w = window.innerWidth;
+s = Math.max(w, h);
+C.height = h;
+C.width = w;
+c = C.getContext("2d");
+
+t = 0;
+
+function
+draw()
+{
+    for(j = 0; j < 6; j += 2)
+    {
+        for(i = j; i < 2 * s; i += 6)
+        {
+            r = 0 == j ? Math.sin(0.14 * t) * 128.0 * i / s : 128;
+            g = 2 == j ? Math.sin(0.16 * t) * 128.0 * i / s : 128;
+            b = 4 == j ? Math.sin(0.15 * t) * 128.0 * i / s : 128;
+
+            c.fillStyle = "rgba("
+                + Math.floor(r) + ","
+                + Math.floor(g) + ","
+                + Math.floor(b) + ","
+                + "1)";
+
+            x = i;
+            for(y = 0; y < i; y += 1)
+            {
+                c.fillRect(x, y, 1, 1);
+                x -= 1;
+            }
+        }
+    }
+
+    ++t;
+}
+
+setInterval(draw, 10);
+
+</script>
