@@ -1,0 +1,10 @@
+AC_INIT(mute, 0.1.0)
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+
+PKG_CHECK_MODULES(X11, [x11 >= 1.6.2])
+
+AC_OUTPUT(Makefile)
