@@ -1,4 +1,4 @@
-AC_INIT(mute, 0.1.0)
+AC_INIT(xrandom, 0.1.0)
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 AC_PROG_CC
