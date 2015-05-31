@@ -1,0 +1,15 @@
+*.cache
+*.log
+*.o
+*.status
+*tar.gz
+/.deps
+/Makefile
+/Makefile.in
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+/opak
