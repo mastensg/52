@@ -14,3 +14,7 @@ Running
 -------
 
     ./23
+
+Or try it live at [jwpack.it][1].
+
+[1]: http://jwpack.it/
