@@ -1,0 +1,58 @@
+<style>
+* { margin: 0; padding: 0; }
+</style>
+<body>
+<canvas id=C0 width=100 height=100></canvas>
+<canvas id=C1 width=100 height=100></canvas>
+<script type="text/javascript">
+h = window.innerHeight;
+w = window.innerWidth;
+s = Math.max(w, h);
+C0.height = 0.5 * h;
+C0.width = w;
+C1.height = 0.5 * h;
+C1.width = w;
+c0 = C0.getContext("2d");
+c1 = C1.getContext("2d");
+
+text0 = "A few years ago I sat with a friend and looked at a menu, and we wondered why everything seemed to be flavored like a taco.  ";
+text1 = "This program draws scrolling lines of text.  ";
+
+th = 0.5 * h;
+c0.font = th + "px sans-serif";
+c1.font = th + "px sans-serif";
+tw0 = c0.measureText(text0).width;
+tw1 = c1.measureText(text1).width;
+t0 = 0;
+t1 = 0;
+
+function
+draw()
+{
+    c0.fillStyle = "#db9";
+    c0.fillRect(0, 0, w, th);
+    c0.fillStyle = "#246";
+
+    c0.fillText(text1, 0 - t1, 0);
+    c0.fillText(text1, tw1 - t1, 0);
+
+    c0.fillText(text0, t0, th);
+    c0.fillText(text0, -tw0 + t0, th);
+
+    c1.fillStyle = "#246";
+    c1.fillRect(0, 0, w, th);
+    c1.fillStyle = "#db9";
+
+    c1.fillText(text0, t0, 0);
+    c1.fillText(text0, -tw0 + t0, 0);
+
+    c1.fillText(text1, 0 - t1, th);
+    c1.fillText(text1, tw1 - t1, th);
+
+    t0 = 0 < t0 ? t0 - (0.005 * w) : tw0;
+    t1 = 0 < t1 ? t1 - (0.005 * w) : tw1;
+}
+
+setInterval(draw, 10);
+
+</script>
