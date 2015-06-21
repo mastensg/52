@@ -1,0 +1,65 @@
+<style>
+* { margin: 0; padding: 0; }
+body { background: #000; cursor: none; }
+</style>
+<body>
+<canvas id=C width=100 height=100></canvas>
+<script type="text/javascript">
+h = window.innerHeight;
+w = window.innerWidth;
+s = Math.max(w, h);
+C.height = h;
+C.width = w;
+c = C.getContext("2d");
+
+BANDS = 15;
+
+cx = w - 0.1 * s;
+cy = h - 0.1 * s;
+
+a = 0;
+
+function
+mousemove(e)
+{
+    cx = e.pageX - C.offsetLeft;
+    cy = e.pageY - C.offsetTop;
+    console.log(cx, cy);
+}
+
+function
+draw(timestep)
+{
+    c.fillStyle = "#ff0046";
+    c.fillRect(0, 0, w, h);
+
+    c.fillStyle = "#fff";
+
+    c.beginPath();
+    c.moveTo(cx, cy);
+    for (i = 0; i < BANDS; ++i)
+    {
+        a1 = a + (2 * Math.PI / BANDS) * (i + 0.0);
+        a2 = a + (2 * Math.PI / BANDS) * (i + 0.5);
+
+        c.lineTo(cx + 2 * s * Math.cos(a1), cy + 2 * s * Math.sin(a1));
+        c.lineTo(cx + 2 * s * Math.cos(a2), cy + 2 * s * Math.sin(a2));
+        c.lineTo(cx, cy);
+    }
+    c.closePath();
+    c.fill();
+
+    c.beginPath();
+    c.arc(cx, cy, 0.07 * s, 0, 2 * Math.PI);
+    c.fill();
+
+    a = (a + 0.015) % (2 * Math.PI);
+
+    window.requestAnimationFrame(draw);
+}
+
+C.onmousemove = mousemove;
+
+window.requestAnimationFrame(draw);
+
+</script>
