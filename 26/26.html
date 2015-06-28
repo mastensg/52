@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<title>coverage</title>
+<style>
+* { margin: 0; padding: 0; }
+body { background: #666; cursor: none; }
+</style>
+<body>
+<canvas id=C width=100 height=100></canvas>
+<script type="text/javascript">
+sz = 500;
+C.height = sz;
+C.width = sz;
+c = C.getContext("2d");
+
+cx = sz/2;
+cy = sz/2;
+
+D = [];
+for (i=0; i<sz; ++i)
+    D[i] = new Array(sz);
+
+for (i=0; i<500; ++i)
+    D[Math.floor(Math.random() * sz)][Math.floor(Math.random() * sz)] = 1;
+
+function
+collision(A, n, m, d)
+{
+    for (i=n; 0<= i && i < sz && i!=m; i+=d)
+        if (A[i])
+            break;
+
+    return i;
+}
+
+function
+draw(timestep)
+{
+    // background
+    c.fillStyle = "#000";
+    c.fillRect(0, 0, sz, sz);
+
+    // areas
+    Ra = new Array(sz);
+    Rb = new Array(sz);
+
+    Ra[cy] = collision(D[cy], cx, 0, -1);
+    Rb[cy] = collision(D[cy], cx, sz, 1);
+
+    for (y=cy-1; 0<=y; --y)
+    {
+        Ra[y] = collision(D[y], cx, Ra[y+1], -1);
+        Rb[y] = collision(D[y], cx, Rb[y+1], 1);
+    }
+
+    for (y=cy+1; y<sz; ++y)
+    {
+        Ra[y] = collision(D[y], cx, Ra[y-1], -1);
+        Rb[y] = collision(D[y], cx, Rb[y-1], 1);
+    }
+
+    c.fillStyle = "#333";
+    for (y=0; y<sz; ++y)
+    {
+        w = Math.max(0, Rb[y] - Ra[y] - 1);
+        c.fillRect(Ra[y] + 1, y, w, 1);
+    }
+
+    // stars
+    c.fillStyle = "#fff";
+    for (i=0; i<sz; ++i)
+        for (j=0; j<sz; ++j)
+            if (D[i][j])
+                c.fillRect(j, i, 1, 1);
+
+    // chest
+    c.fillStyle = "#0f0";
+    c.fillRect(cx, cy, 1, 1);
+}
+
+function
+click(e)
+{
+    x = e.pageX - C.offsetLeft;
+    y = e.pageY - C.offsetTop;
+    D[y][x] = 1;
+    window.requestAnimationFrame(draw);
+}
+
+function
+mousemove(e)
+{
+    cx = e.pageX - C.offsetLeft;
+    cy = e.pageY - C.offsetTop;
+    window.requestAnimationFrame(draw);
+}
+
+C.onclick = click;
+C.onmousemove = mousemove;
+
+window.requestAnimationFrame(draw);
+</script>
