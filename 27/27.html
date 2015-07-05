@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<title>27</title>
+<style>
+* { margin: 0; padding: 0; }
+</style>
+<body>
+<canvas id=C width=100 height=100></canvas>
+<script type="text/javascript">
+h = window.innerHeight;
+w = window.innerWidth;
+s = Math.max(w, h);
+C.height = h;
+C.width = w;
+c = C.getContext("2d");
+
+A = [];
+for (i=0; i<h; ++i)
+    A[i] = new Array(w);
+
+s = 0;
+
+for (i=0; i<100; ++i)
+    A[0][Math.floor(Math.random() * w)] = 1;
+
+for (y=1; y<h; ++y)
+{
+    for (x=0; x<w; ++x)
+        A[y][x] = A[y-1][x] ^ (x+1 < w ? A[y-1][x+1] : 1);
+}
+
+function
+draw(timestep)
+{
+    c.fillStyle = "#000";
+    c.fillRect(0, 0, w, h);
+
+    c.fillStyle = "#fff";
+    for (y=0; y<h; ++y)
+    {
+        for (x=0; x<w; ++x)
+            if (A[(s+y) % h][x])
+                c.fillRect(x, y, 1, 1);
+    }
+
+    y = (s + h - 1) % h;
+    for (x=0; x<w; ++x)
+        A[s][x] = A[y][x] ^ (x+1 < w ? A[y][x+1] : 1);
+
+    s = (s + 1) % h;
+
+    window.requestAnimationFrame(draw);
+}
+
+window.requestAnimationFrame(draw);
+</script>
