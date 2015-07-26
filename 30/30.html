@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<title>30</title>
+<style>
+* { margin: 0; padding: 0; }
+</style>
+<body>
+<canvas id=C width=100 height=100></canvas>
+<script type="text/javascript">
+h = window.innerHeight;
+w = window.innerWidth;
+s = Math.max(w, h);
+C.height = h;
+C.width = w;
+c = C.getContext("2d");
+
+N = 64;
+
+P = new Array(N);
+for (i=0; i<N; ++i)
+    P[i] = [Math.floor(Math.random() * w), Math.floor(Math.random() * h)];
+
+t = 1000.0 * Math.random();
+
+function
+draw(timestep)
+{
+    c.fillStyle = "rgb("
+        + Math.floor(128 + 128 * Math.sin(0.007 * t)) + ","
+        + Math.floor(128 + 128 * Math.sin(0.019 * t)) + ","
+        + Math.floor(128 + 128 * Math.sin(0.013 * t)) + ")";
+
+    for (i=0; i<N; ++i)
+    {
+        c.fillRect(P[i][0], P[i][1], 3, 3);
+
+        x = P[i][0];
+        y = P[i][1];
+
+        for (j=0; j<N; ++j)
+        {
+            if (j == i)
+                continue;
+
+            if (j == (i + 13) % N)
+                a = 0.001;
+            else
+                a = -0.0001 / N;
+
+            a *= 5.0;
+            x += a * (P[j][0] - P[i][0]);
+            y += a * (P[j][1] - P[i][1]);
+        }
+
+        if (0)
+        {
+        x += 1.0 * (Math.random() - 0.5);
+        y += 1.0 * (Math.random() - 0.5);
+        }
+
+        P[i][0] = x;
+        P[i][1] = y;
+    }
+
+    t += 1;
+
+    window.requestAnimationFrame(draw);
+}
+
+window.requestAnimationFrame(draw);
+</script>
