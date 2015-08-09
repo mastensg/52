@@ -184,14 +184,14 @@ text_draw(GLfloat x, GLfloat y, const char *string)
 
 ////////////////////////////////////////////////////////////////////////
 
-int the_ordinal = 0;
+int the_natural = 0;
 
 static void *
 update_thread(void *arg)
 {
     for (;;)
     {
-        if (EOF == scanf("%d\n", &the_ordinal))
+        if (EOF == scanf("%d\n", &the_natural))
             exit(EXIT_SUCCESS);
     }
 
@@ -376,7 +376,7 @@ main(int, const char *argv[])
         glBindBuffer(GL_ARRAY_BUFFER, tp.vbo);
         glBindVertexArray(tp.vao);
 
-        std::sprintf(string, "%d", the_ordinal);
+        std::sprintf(string, "%d", the_natural);
 
         text_draw(100, 400, string);
 

@@ -1,7 +1,7 @@
-ordinal
+natural
 =======
 
-This programs displays ordinal numbers.
+This programs displays natural numbers.
 
 Building
 --------
@@ -14,4 +14,4 @@ Building
 Running
 -------
 
-    (echo 123; sleep 4) | ./ordinal
+    (echo 123; sleep 4) | ./natural
