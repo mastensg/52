@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<title>34</title>
+<style>
+* { background: black; overflow: hidden; margin: 0; padding: 0; }
+</style>
+<body>
+<canvas id=C width=100 height=100></canvas>
+<script type="text/javascript">
+h = window.innerHeight;
+w = window.innerWidth;
+s = Math.max(w, h);
+C.height = h;
+C.width = w;
+c = C.getContext("2d");
+
+o = 100;
+X = [w/2-o, w/2+o];
+Y = [h/2-o, h/2+o];
+
+r = Math.random() * 2.0;
+
+t = 0;
+
+function
+draw(timestep)
+{
+    len = X.length;
+
+    x0 = X[len - 1];
+    x1 = X[len - 2];
+    y0 = Y[len - 1];
+    y1 = Y[len - 2];
+
+    dx = x1 - x0;
+    dy = y1 - y0;
+    d = Math.sqrt(dx*dx + dy*dy);
+    a = Math.atan2(dy, dx) + r;
+    x = x0 + d * Math.cos(a);
+    y = y0 + d * Math.sin(a);
+    X.push(x);
+    Y.push(y);
+
+    c.fillStyle = "#000000";
+    c.fillRect(0, 0, w, h);
+
+    for (i = 2; i < X.length; ++i)
+    {
+        c.fillStyle = "#ffffff";
+        c.fillStyle = "rgba("
+            + Math.floor(128 + 128 * Math.sin(i+t)) + ","
+            + Math.floor(128 + 128 * Math.sin(i+t)) + ","
+            + Math.floor(128 + 128 * Math.sin(i+t)) + ",0.7)";
+        c.beginPath();
+        c.moveTo(X[i-2], Y[i-2]);
+        c.lineTo(X[i-1], Y[i-1]);
+        c.lineTo(X[i-0], Y[i-0]);
+        c.closePath();
+        c.fill();
+    }
+
+    t += 0.1;
+
+    window.requestAnimationFrame(draw);
+}
+
+window.requestAnimationFrame(draw);
+</script>
