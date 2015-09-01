@@ -2,7 +2,8 @@
 ==
 
 Let _s_ be the number of Sundays in the year 2015 that are in the past. There
-are at least _s_ programs released here.
+was supposed to be at least _s_ programs released here. I failed to release a
+program by the 35th Sunday.
 
 License
 =======
